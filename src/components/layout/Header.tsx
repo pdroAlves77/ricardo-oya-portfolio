@@ -62,7 +62,7 @@ export function Header() {
           focus-visible:outline-foreground
         "
       >
-        Ricardo Oya
+        ricardooya.art
       </Link>
 
       <nav aria-label="Main navigation">

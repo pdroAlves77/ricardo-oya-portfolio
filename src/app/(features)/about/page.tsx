@@ -76,16 +76,13 @@ export default function AboutPage() {
 
               <div className="mt-6 max-w-3xl space-y-6 text-base leading-8 text-muted md:text-lg md:leading-9">
                 <p>
-                  Ricardo Oya is a creative retoucher with over
-                  seven years of experience working with leading
-                  studios in Brazil.
+                  Hi, I'm Ricardo Oya - Creative Retoucher specializing in high-end retouching and image editing.
                 </p>
 
                 <p>
-                  He now works independently with international
-                  clients, delivering high-end retouching, image
-                  editing and post-production for automotive,
-                  advertising and commercial projects.
+                  I have over 7 years of experience working 
+                  with top studios in Brazil, and I now 
+                  freelance for international clients.
                 </p>
               </div>
             </div>

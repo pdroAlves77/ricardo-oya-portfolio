@@ -105,8 +105,7 @@ export default async function HomePage() {
             >
               <LeadText className="max-w-3xl text-base leading-7 md:text-xl md:leading-9">
                 High-end retouching and image editing for
-                automotive, commercial and international
-                projects.
+                international projects.
               </LeadText>
 
               <div className="flex items-center gap-3 md:justify-self-end">
