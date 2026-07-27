@@ -30,6 +30,7 @@
 html {
   min-width: 320px;
   scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
   background: var(--color-background);
 }
 

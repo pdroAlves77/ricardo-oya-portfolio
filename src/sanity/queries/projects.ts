@@ -12,12 +12,14 @@ export const PROJECTS_QUERY = defineQuery(`
     year,
     client,
     description,
+
     coverImage {
       asset,
       alt,
       crop,
       hotspot
     },
+
     featured,
     order
   }

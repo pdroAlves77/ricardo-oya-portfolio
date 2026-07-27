@@ -19,6 +19,11 @@ export type ProjectCredit = {
   name: string;
 };
 
+export type ProjectBeforeAfter = {
+  before?: PortfolioImage;
+  after?: PortfolioImage;
+};
+
 export type PortfolioProject = {
   _id: string;
   title: string;
@@ -31,12 +36,7 @@ export type PortfolioProject = {
   credits?: ProjectCredit[];
   coverImage: PortfolioImage;
   gallery?: PortfolioImage[];
-
-  beforeAfter?: {
-    before?: PortfolioImage;
-    after?: PortfolioImage;
-  };
-
+  beforeAfter?: ProjectBeforeAfter;
   featured?: boolean;
   order?: number;
 };

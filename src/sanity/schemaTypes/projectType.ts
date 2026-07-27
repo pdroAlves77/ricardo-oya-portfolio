@@ -15,7 +15,10 @@ export const projectType = defineType({
       title: "Título",
       type: "string",
       validation: (rule) =>
-        rule.required().min(2).error("Informe o título do projeto."),
+        rule
+          .required()
+          .min(2)
+          .error("Informe o título do projeto."),
     }),
 
     defineField({
@@ -119,6 +122,7 @@ export const projectType = defineType({
           name: "credit",
           title: "Crédito",
           type: "object",
+
           fields: [
             defineField({
               name: "role",
@@ -158,6 +162,7 @@ export const projectType = defineType({
       options: {
         hotspot: true,
       },
+
       fields: [
         defineField({
           name: "alt",
@@ -166,9 +171,12 @@ export const projectType = defineType({
             "Descreva brevemente o conteúdo da imagem para acessibilidade.",
           type: "string",
           validation: (rule) =>
-            rule.required().error("Informe a descrição da imagem."),
+            rule
+              .required()
+              .error("Informe a descrição da imagem."),
         }),
       ],
+
       validation: (rule) =>
         rule.required().error("Adicione uma imagem principal."),
     }),
@@ -179,6 +187,7 @@ export const projectType = defineType({
       description:
         "Arraste as imagens para alterar a ordem de exibição.",
       type: "array",
+
       of: [
         defineArrayMember({
           name: "galleryImage",
@@ -231,6 +240,10 @@ export const projectType = defineType({
                 ],
                 layout: "dropdown",
               },
+              validation: (rule) =>
+                rule
+                  .required()
+                  .error("Selecione o layout da imagem."),
             }),
           ],
         }),
@@ -243,6 +256,8 @@ export const projectType = defineType({
     defineField({
       name: "beforeAfter",
       title: "Antes e depois",
+      description:
+        "Adicione as duas imagens para habilitar o comparador na página do projeto.",
       type: "object",
       options: {
         collapsible: true,
@@ -263,6 +278,20 @@ export const projectType = defineType({
               name: "alt",
               title: "Descrição da imagem",
               type: "string",
+              validation: (rule) =>
+                rule.custom((value, context) => {
+                  const parent = context.parent as
+                    | {
+                        asset?: unknown;
+                      }
+                    | undefined;
+
+                  if (parent?.asset && !value) {
+                    return "Informe a descrição da imagem.";
+                  }
+
+                  return true;
+                }),
             }),
           ],
         }),
@@ -280,10 +309,49 @@ export const projectType = defineType({
               name: "alt",
               title: "Descrição da imagem",
               type: "string",
+              validation: (rule) =>
+                rule.custom((value, context) => {
+                  const parent = context.parent as
+                    | {
+                        asset?: unknown;
+                      }
+                    | undefined;
+
+                  if (parent?.asset && !value) {
+                    return "Informe a descrição da imagem.";
+                  }
+
+                  return true;
+                }),
             }),
           ],
         }),
       ],
+
+      validation: (rule) =>
+        rule.custom((value) => {
+          if (!value) {
+            return true;
+          }
+
+          const beforeAfter = value as {
+            before?: {
+              asset?: unknown;
+            };
+            after?: {
+              asset?: unknown;
+            };
+          };
+
+          const hasBefore = Boolean(beforeAfter.before?.asset);
+          const hasAfter = Boolean(beforeAfter.after?.asset);
+
+          if (hasBefore !== hasAfter) {
+            return "Adicione as imagens de antes e depois.";
+          }
+
+          return true;
+        }),
     }),
 
     defineField({
