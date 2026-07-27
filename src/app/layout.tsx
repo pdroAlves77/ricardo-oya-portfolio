@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
 import { SITE_CONFIG } from "@/lib/site";
 
 import "./globals.css";
@@ -66,28 +64,6 @@ export const metadata: Metadata = {
   category: "portfolio",
 };
 
-const personJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: SITE_CONFIG.name,
-  url: SITE_CONFIG.url,
-  jobTitle: "Creative Retoucher",
-  description: SITE_CONFIG.description,
-  sameAs: [SITE_CONFIG.instagram],
-  knowsAbout: [
-    "High-end retouching",
-    "Image editing",
-    "Post-production",
-    "Automotive imagery",
-    "Lifestyle imagery",
-    "Commercial imagery",
-  ],
-};
-
-function serializeJsonLd(data: object) {
-  return JSON.stringify(data).replace(/</g, "\\u003c");
-}
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -96,49 +72,7 @@ export default function RootLayout({
   return (
     <html lang={SITE_CONFIG.language}>
       <body className={`${geist.variable} antialiased`}>
-        <a
-          href="#main-content"
-          className="
-            fixed
-            left-4
-            top-4
-            z-[100]
-            -translate-y-24
-            bg-foreground
-            px-4
-            py-3
-            text-xs
-            font-medium
-            uppercase
-            tracking-[0.14em]
-            text-background
-            transition-transform
-            focus:translate-y-0
-          "
-        >
-          Skip to content
-        </a>
-
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: serializeJsonLd(personJsonLd),
-          }}
-        />
-
-        <div className="flex min-h-screen flex-col">
-          <Header />
-
-          <div
-            id="main-content"
-            className="flex-1"
-            tabIndex={-1}
-          >
-            {children}
-          </div>
-
-          <Footer />
-        </div>
+        {children}
       </body>
     </html>
   );
