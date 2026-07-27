@@ -3,32 +3,32 @@
 @theme {
   --font-sans: var(--font-geist), Arial, Helvetica, sans-serif;
 
-  --color-background: #f3f2ed;
+  --color-background: #f2f1ec;
   --color-foreground: #111111;
-  --color-muted: #6d6c67;
-  --color-border: #d8d7d1;
+  --color-muted: #696862;
+  --color-border: #d7d5ce;
   --color-surface: #ffffff;
 
   --breakpoint-xs: 30rem;
   --breakpoint-3xl: 120rem;
-
-  --container-portfolio: 112.5rem;
 
   --ease-portfolio: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 :root {
   color-scheme: light;
-
-  --header-height-mobile: 5rem;
-  --header-height-desktop: 6rem;
+  background: var(--color-background);
+  color: var(--color-foreground);
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 html {
+  min-width: 320px;
   scroll-behavior: smooth;
   background: var(--color-background);
 }
@@ -43,6 +43,10 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+main {
+  width: 100%;
 }
 
 button,
@@ -60,7 +64,7 @@ a {
 button {
   border: 0;
   padding: 0;
-  background: none;
+  background: transparent;
   color: inherit;
 }
 
@@ -93,8 +97,21 @@ h1,
 h2,
 h3,
 h4,
-p {
+p,
+figure,
+dl,
+dd {
   margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 ::selection {
@@ -105,6 +122,13 @@ p {
 :focus-visible {
   outline: 1px solid var(--color-foreground);
   outline-offset: 5px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  a,
+  button {
+    cursor: pointer;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

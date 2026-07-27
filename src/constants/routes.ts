@@ -1,6 +1,10 @@
 export const ROUTES = {
   home: "/",
-  work: "/work",
   about: "/about",
   contact: "/contact",
+  studio: "/studio",
 } as const;
+
+export function getProjectRoute(slug: string) {
+  return `/work/${slug}`;
+}

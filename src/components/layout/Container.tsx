@@ -1,10 +1,17 @@
-import type { ComponentPropsWithoutRef, ElementType, ReactNode } from "react";
+import type {
+  ComponentPropsWithoutRef,
+  ElementType,
+  ReactNode,
+} from "react";
 
 type ContainerProps<T extends ElementType> = {
   as?: T;
   children: ReactNode;
   className?: string;
-} & Omit<ComponentPropsWithoutRef<T>, "as" | "children" | "className">;
+} & Omit<
+  ComponentPropsWithoutRef<T>,
+  "as" | "children" | "className"
+>;
 
 export function Container<T extends ElementType = "div">({
   as,
@@ -16,7 +23,18 @@ export function Container<T extends ElementType = "div">({
 
   return (
     <Component
-      className={`mx-auto w-full max-w-[1800px] px-5 md:px-8 xl:px-12 ${className}`}
+      className={`
+        mx-auto
+        w-full
+        max-w-[1920px]
+        px-5
+        sm:px-6
+        md:px-8
+        lg:px-10
+        xl:px-14
+        2xl:px-16
+        ${className}
+      `}
       {...props}
     >
       {children}
