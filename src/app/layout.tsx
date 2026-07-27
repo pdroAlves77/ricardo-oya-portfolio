@@ -95,6 +95,29 @@ export default function RootLayout({
   return (
     <html lang={SITE_CONFIG.language}>
       <body className={`${geist.variable} antialiased`}>
+        <a
+          href="#main-content"
+          className="
+            fixed
+            left-4
+            top-4
+            z-[100]
+            -translate-y-24
+            bg-foreground
+            px-4
+            py-3
+            text-xs
+            font-medium
+            uppercase
+            tracking-[0.14em]
+            text-background
+            transition-transform
+            focus:translate-y-0
+          "
+        >
+          Skip to content
+        </a>
+
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -108,7 +131,13 @@ export default function RootLayout({
         <div className="flex min-h-screen flex-col">
           <Header />
 
-          <div className="flex-1">{children}</div>
+          <div
+            id="main-content"
+            className="flex-1"
+            tabIndex={-1}
+          >
+            {children}
+          </div>
 
           <Footer />
         </div>

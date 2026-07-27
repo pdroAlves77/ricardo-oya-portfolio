@@ -3,12 +3,22 @@ import { defineQuery } from "next-sanity";
 export const PROJECT_BY_SLUG_QUERY = defineQuery(`
   *[
     _type == "project" &&
-    slug.current == $slug
+    slug.current == $slug &&
+    defined(coverImage.asset)
   ][0] {
     _id,
     title,
     "slug": slug.current,
-    category,
+
+    "category": select(
+      category == "automotive" => "Automotive",
+      category == "lifestyle" => "Lifestyle",
+      category == "product" => "Product",
+      category == "portrait" => "Portrait",
+      category == "personal" => "Personal",
+      "Personal"
+    ),
+
     year,
     client,
     description,

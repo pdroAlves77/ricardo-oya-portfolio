@@ -24,19 +24,20 @@ export function Reveal({
 }: RevealProps) {
   const shouldReduceMotion = useReducedMotion();
 
+  if (shouldReduceMotion) {
+    return (
+      <div className={cn(className)}>
+        {children}
+      </div>
+    );
+  }
+
   return (
     <motion.div
-      initial={
-        shouldReduceMotion
-          ? {
-              opacity: 1,
-              y: 0,
-            }
-          : {
-              opacity: 0,
-              y: distance,
-            }
-      }
+      initial={{
+        opacity: 0,
+        y: distance,
+      }}
       whileInView={{
         opacity: 1,
         y: 0,
@@ -46,8 +47,8 @@ export function Reveal({
         amount,
       }}
       transition={{
-        duration: shouldReduceMotion ? 0 : 0.75,
-        delay: shouldReduceMotion ? 0 : delay,
+        duration: 0.75,
+        delay,
         ease: [0.22, 1, 0.36, 1],
       }}
       className={cn(className)}

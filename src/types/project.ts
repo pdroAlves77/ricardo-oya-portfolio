@@ -7,6 +7,13 @@ export type GalleryLayout =
   | "portraitRight"
   | "half";
 
+export type ProjectCategory =
+  | "Automotive"
+  | "Lifestyle"
+  | "Product"
+  | "Portrait"
+  | "Personal";
+
 export type PortfolioImage = SanityImageSource & {
   _key?: string;
   alt?: string;
@@ -28,7 +35,7 @@ export type PortfolioProject = {
   _id: string;
   title: string;
   slug: string;
-  category: string;
+  category: ProjectCategory;
   year: number;
   client?: string;
   description?: string;

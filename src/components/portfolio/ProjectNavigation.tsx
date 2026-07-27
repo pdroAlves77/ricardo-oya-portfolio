@@ -38,7 +38,14 @@ function NavigationArrow({
       viewBox="0 0 24 24"
       fill="none"
       className={cn(
-        "h-5 w-5 transition-transform duration-300",
+        `
+          h-5
+          w-5
+          shrink-0
+          transition-transform
+          duration-300
+          ease-[var(--ease-portfolio)]
+        `,
         isPrevious
           ? "group-hover:-translate-x-1"
           : "group-hover:translate-x-1",
@@ -73,9 +80,14 @@ function NavigationCard({
     .auto("format")
     .url();
 
+  const navigationLabel = isPrevious
+    ? `Previous project: ${project.title}`
+    : `Next project: ${project.title}`;
+
   return (
     <Link
       href={`/work/${project.slug}`}
+      aria-label={navigationLabel}
       className={cn(
         `
           group
@@ -127,10 +139,7 @@ function NavigationCard({
             `Cover image for ${project.title}`
           }
           fill
-          sizes="
-            (max-width: 767px) 100vw,
-            50vw
-          "
+          sizes="(max-width: 767px) 100vw, 50vw"
           className="
             object-cover
             transition-transform
@@ -146,18 +155,32 @@ function NavigationCard({
           `
             mt-5
             flex
-            items-start
-            justify-between
-            gap-5
+            flex-col
+            gap-3
+            sm:flex-row
+            sm:items-start
+            sm:justify-between
+            sm:gap-5
           `,
-          !isPrevious && "flex-row-reverse",
+          !isPrevious &&
+            "items-end text-right sm:flex-row-reverse",
         )}
       >
         <h2 className="max-w-[16ch] text-2xl font-medium leading-none tracking-[-0.045em] sm:text-3xl">
           {project.title}
         </h2>
 
-        <p className="shrink-0 text-[0.65rem] uppercase tracking-[0.16em] text-muted">
+        <p
+          className="
+            max-w-full
+            text-[0.65rem]
+            uppercase
+            leading-5
+            tracking-[0.16em]
+            text-muted
+            sm:max-w-[18rem]
+          "
+        >
           {project.category} · {project.year}
         </p>
       </div>
@@ -178,7 +201,9 @@ export function ProjectNavigation({
       aria-label="Project navigation"
       className={cn(
         "grid gap-12 md:gap-6",
-        previousProject && nextProject && "md:grid-cols-2",
+        previousProject &&
+          nextProject &&
+          "md:grid-cols-2",
       )}
     >
       {previousProject && (

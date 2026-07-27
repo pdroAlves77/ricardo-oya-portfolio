@@ -3,6 +3,7 @@
 import Image from "next/image";
 import {
   useCallback,
+  useId,
   useRef,
   useState,
   type KeyboardEvent,
@@ -25,7 +26,10 @@ const DEFAULT_POSITION = 50;
 const KEYBOARD_STEP = 5;
 
 function clampPosition(value: number) {
-  return Math.min(MAX_POSITION, Math.max(MIN_POSITION, value));
+  return Math.min(
+    MAX_POSITION,
+    Math.max(MIN_POSITION, value),
+  );
 }
 
 export function BeforeAfterSlider({
@@ -36,6 +40,7 @@ export function BeforeAfterSlider({
   className,
 }: BeforeAfterSliderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const instructionsId = useId();
 
   const [position, setPosition] = useState(DEFAULT_POSITION);
   const [isDragging, setIsDragging] = useState(false);
@@ -48,8 +53,14 @@ export function BeforeAfterSlider({
     }
 
     const bounds = container.getBoundingClientRect();
+
+    if (bounds.width <= 0) {
+      return;
+    }
+
     const relativePosition = clientX - bounds.left;
-    const percentage = (relativePosition / bounds.width) * 100;
+    const percentage =
+      (relativePosition / bounds.width) * 100;
 
     setPosition(clampPosition(percentage));
   }, []);
@@ -57,7 +68,12 @@ export function BeforeAfterSlider({
   function handlePointerDown(
     event: PointerEvent<HTMLDivElement>,
   ) {
+    if (!event.isPrimary || event.button !== 0) {
+      return;
+    }
+
     event.currentTarget.setPointerCapture(event.pointerId);
+
     setIsDragging(true);
     updatePosition(event.clientX);
   }
@@ -65,7 +81,7 @@ export function BeforeAfterSlider({
   function handlePointerMove(
     event: PointerEvent<HTMLDivElement>,
   ) {
-    if (!isDragging) {
+    if (!isDragging || !event.isPrimary) {
       return;
     }
 
@@ -75,10 +91,18 @@ export function BeforeAfterSlider({
   function handlePointerEnd(
     event: PointerEvent<HTMLDivElement>,
   ) {
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
+    if (
+      event.currentTarget.hasPointerCapture(event.pointerId)
+    ) {
+      event.currentTarget.releasePointerCapture(
+        event.pointerId,
+      );
     }
 
+    setIsDragging(false);
+  }
+
+  function handleLostPointerCapture() {
     setIsDragging(false);
   }
 
@@ -91,7 +115,9 @@ export function BeforeAfterSlider({
         event.preventDefault();
 
         setPosition((currentPosition) =>
-          clampPosition(currentPosition - KEYBOARD_STEP),
+          clampPosition(
+            currentPosition - KEYBOARD_STEP,
+          ),
         );
 
         break;
@@ -101,7 +127,9 @@ export function BeforeAfterSlider({
         event.preventDefault();
 
         setPosition((currentPosition) =>
-          clampPosition(currentPosition + KEYBOARD_STEP),
+          clampPosition(
+            currentPosition + KEYBOARD_STEP,
+          ),
         );
 
         break;
@@ -120,6 +148,8 @@ export function BeforeAfterSlider({
         break;
     }
   }
+
+  const roundedPosition = Math.round(position);
 
   return (
     <div
@@ -144,6 +174,7 @@ export function BeforeAfterSlider({
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerEnd}
       onPointerCancel={handlePointerEnd}
+      onLostPointerCapture={handleLostPointerCapture}
     >
       <Image
         src={beforeSrc}
@@ -179,7 +210,15 @@ export function BeforeAfterSlider({
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 z-20 w-px bg-white shadow-[0_0_12px_rgba(0,0,0,0.35)]"
+        className="
+          pointer-events-none
+          absolute
+          inset-y-0
+          z-20
+          w-px
+          bg-white
+          shadow-[0_0_12px_rgba(0,0,0,0.35)]
+        "
         style={{
           left: `${position}%`,
         }}
@@ -189,10 +228,12 @@ export function BeforeAfterSlider({
         type="button"
         role="slider"
         aria-label="Compare before and after images"
+        aria-describedby={instructionsId}
+        aria-orientation="horizontal"
         aria-valuemin={MIN_POSITION}
         aria-valuemax={MAX_POSITION}
-        aria-valuenow={Math.round(position)}
-        aria-valuetext={`${Math.round(position)}% after image visible`}
+        aria-valuenow={roundedPosition}
+        aria-valuetext={`${roundedPosition}% after image visible`}
         onKeyDown={handleKeyDown}
         className="
           absolute
@@ -259,8 +300,13 @@ export function BeforeAfterSlider({
         </span>
       </button>
 
-      <p className="sr-only">
-        {afterAlt}
+      <p
+        id={instructionsId}
+        className="sr-only"
+      >
+        Use the left and right arrow keys to compare the
+        images. Press Home to show only the before image and
+        End to show the complete after image. {afterAlt}
       </p>
     </div>
   );

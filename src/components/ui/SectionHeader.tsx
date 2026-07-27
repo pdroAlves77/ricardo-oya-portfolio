@@ -20,7 +20,16 @@ export function SectionHeader({
   return (
     <div
       className={cn(
-        "grid gap-5 border-b border-border pb-6 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-end md:pb-8",
+        `
+          grid
+          gap-5
+          border-b
+          border-border
+          pb-6
+          sm:grid-cols-[auto_minmax(0,1fr)_auto]
+          sm:items-end
+          md:pb-8
+        `,
         className,
       )}
     >
@@ -28,26 +37,27 @@ export function SectionHeader({
         {number}
       </p>
 
-      <div className="hidden items-center gap-5 sm:flex">
+      <div className="flex min-w-0 items-center gap-5">
         <span
           aria-hidden="true"
-          className="h-px w-12 bg-border"
+          className="hidden h-px w-12 shrink-0 bg-border sm:block"
         />
 
         <h2
           id={id}
-          className="text-xl font-medium uppercase tracking-[0.12em] md:text-2xl"
+          className="
+            text-2xl
+            font-medium
+            uppercase
+            tracking-[0.1em]
+            sm:text-xl
+            sm:tracking-[0.12em]
+            md:text-2xl
+          "
         >
           {title}
         </h2>
       </div>
-
-      <h2
-        id={id ? `${id}-mobile` : undefined}
-        className="text-2xl font-medium uppercase tracking-[0.1em] sm:hidden"
-      >
-        {title}
-      </h2>
 
       {meta ? (
         <div className="text-xs uppercase tracking-[0.17em] text-muted sm:text-right md:text-sm">
