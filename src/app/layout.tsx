@@ -35,10 +35,6 @@ export const metadata: Metadata = {
   creator: SITE_CONFIG.creator,
   publisher: SITE_CONFIG.creator,
 
-  alternates: {
-    canonical: "/",
-  },
-
   openGraph: {
     type: "website",
     locale: SITE_CONFIG.locale,
@@ -83,9 +79,14 @@ const personJsonLd = {
     "Image editing",
     "Post-production",
     "Automotive imagery",
+    "Lifestyle imagery",
     "Commercial imagery",
   ],
 };
+
+function serializeJsonLd(data: object) {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
 
 export default function RootLayout({
   children,
@@ -121,10 +122,7 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(personJsonLd).replace(
-              /</g,
-              "\\u003c",
-            ),
+            __html: serializeJsonLd(personJsonLd),
           }}
         />
 

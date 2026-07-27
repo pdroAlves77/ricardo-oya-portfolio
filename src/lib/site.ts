@@ -11,13 +11,25 @@ function getSiteUrl() {
     return normalizeUrl(configuredUrl);
   }
 
-  const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  const vercelUrl =
+    process.env.VERCEL_PROJECT_PRODUCTION_URL;
 
   if (vercelUrl) {
     return normalizeUrl(`https://${vercelUrl}`);
   }
 
   return FALLBACK_SITE_URL;
+}
+
+export function getAbsoluteUrl(path = "/") {
+  const normalizedPath = path.startsWith("/")
+    ? path
+    : `/${path}`;
+
+  return new URL(
+    normalizedPath,
+    `${SITE_CONFIG.url}/`,
+  ).toString();
 }
 
 export const SITE_CONFIG = {
@@ -29,5 +41,6 @@ export const SITE_CONFIG = {
   locale: "en_US",
   language: "en",
   creator: "Ricardo Oya",
-  instagram: "https://www.instagram.com/ricardooya.art",
+  instagram:
+    "https://www.instagram.com/ricardooya.art",
 } as const;

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 
 import { Container } from "@/components/layout/Container";
 import { BeforeAfterSlider } from "@/components/portfolio/BeforeAfterSlider";
@@ -9,6 +10,10 @@ import { BackLink } from "@/components/ui/BackLink";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { ROUTES } from "@/constants/routes";
+import {
+  getAbsoluteUrl,
+  SITE_CONFIG,
+} from "@/lib/site";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import { PROJECT_BY_SLUG_QUERY } from "@/sanity/queries/project-by-slug";
@@ -29,6 +34,34 @@ type ProjectNavigationState = {
   previousProject: PortfolioProject | null;
   nextProject: PortfolioProject | null;
 };
+
+const getProject = cache(async (slug: string) => {
+  return client.fetch<PortfolioProject | null>(
+    PROJECT_BY_SLUG_QUERY,
+    {
+      slug,
+    },
+    {
+      next: {
+        revalidate: 60,
+        tags: ["projects", `project:${slug}`],
+      },
+    },
+  );
+});
+
+const getProjects = cache(async () => {
+  return client.fetch<PortfolioProject[]>(
+    PROJECTS_QUERY,
+    {},
+    {
+      next: {
+        revalidate: 60,
+        tags: ["projects"],
+      },
+    },
+  );
+});
 
 function getGalleryLayoutClasses(
   layout: GalleryLayout | undefined,
@@ -165,8 +198,8 @@ function ProjectGalleryImage({
   index: number;
 }) {
   const imageUrl = urlFor(image)
-    .width(2600)
-    .quality(90)
+    .width(2400)
+    .quality(86)
     .fit("max")
     .auto("format")
     .url();
@@ -207,29 +240,92 @@ function ProjectGalleryImage({
   );
 }
 
+export async function generateStaticParams() {
+  const projects = await getProjects();
+
+  return projects.map((project) => ({
+    slug: project.slug,
+  }));
+}
+
 export async function generateMetadata({
   params,
 }: ProjectPageProps): Promise<Metadata> {
   const { slug } = await params;
-
-  const project = await client.fetch<PortfolioProject | null>(
-    PROJECT_BY_SLUG_QUERY,
-    {
-      slug,
-    },
-  );
+  const project = await getProject(slug);
 
   if (!project) {
     return {
       title: "Project not found",
+
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
+  const canonicalPath = `/work/${project.slug}`;
+
+  const description =
+    project.description ||
+    `${project.title}, a ${project.category.toLowerCase()} retouching project by Ricardo Oya.`;
+
+  const socialImageUrl = urlFor(project.coverImage)
+    .width(1200)
+    .height(630)
+    .quality(86)
+    .fit("crop")
+    .auto("format")
+    .url();
+
   return {
     title: project.title,
-    description:
-      project.description ||
-      `${project.title}, a ${project.category} retouching project by Ricardo Oya.`,
+    description,
+
+    alternates: {
+      canonical: canonicalPath,
+    },
+
+    openGraph: {
+      type: "article",
+      locale: SITE_CONFIG.locale,
+      url: getAbsoluteUrl(canonicalPath),
+      siteName: SITE_CONFIG.name,
+      title: project.title,
+      description,
+
+      images: [
+        {
+          url: socialImageUrl,
+          width: 1200,
+          height: 630,
+          alt:
+            project.coverImage.alt ||
+            `Cover image for ${project.title}`,
+        },
+      ],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: project.title,
+      description,
+      images: [socialImageUrl],
+    },
+
+    robots: {
+      index: true,
+      follow: true,
+
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
   };
 }
 
@@ -239,14 +335,8 @@ export default async function ProjectPage({
   const { slug } = await params;
 
   const [project, projects] = await Promise.all([
-    client.fetch<PortfolioProject | null>(
-      PROJECT_BY_SLUG_QUERY,
-      {
-        slug,
-      },
-    ),
-
-    client.fetch<PortfolioProject[]>(PROJECTS_QUERY),
+    getProject(slug),
+    getProjects(),
   ]);
 
   if (!project) {
@@ -258,9 +348,13 @@ export default async function ProjectPage({
     nextProject,
   } = getProjectNavigation(projects, project._id);
 
+  const canonicalUrl = getAbsoluteUrl(
+    `/work/${project.slug}`,
+  );
+
   const coverImageUrl = urlFor(project.coverImage)
-    .width(2800)
-    .quality(92)
+    .width(2400)
+    .quality(86)
     .fit("max")
     .auto("format")
     .url();
@@ -273,8 +367,8 @@ export default async function ProjectPage({
   const beforeImageUrl =
     hasBeforeAfter && project.beforeAfter?.before
       ? urlFor(project.beforeAfter.before)
-          .width(2800)
-          .quality(92)
+          .width(2400)
+          .quality(86)
           .fit("max")
           .auto("format")
           .url()
@@ -283,15 +377,59 @@ export default async function ProjectPage({
   const afterImageUrl =
     hasBeforeAfter && project.beforeAfter?.after
       ? urlFor(project.beforeAfter.after)
-          .width(2800)
-          .quality(92)
+          .width(2400)
+          .quality(86)
           .fit("max")
           .auto("format")
           .url()
       : null;
 
+  const projectDescription =
+    project.description ||
+    `${project.title}, a ${project.category.toLowerCase()} retouching project by Ricardo Oya.`;
+
+  const projectJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.title,
+    description: projectDescription,
+    url: canonicalUrl,
+    image: coverImageUrl,
+    genre: project.category,
+    copyrightYear: project.year,
+    creator: {
+      "@type": "Person",
+      name: SITE_CONFIG.creator,
+      url: SITE_CONFIG.url,
+    },
+    ...(project.client
+      ? {
+          contributor: {
+            "@type": "Organization",
+            name: project.client,
+          },
+        }
+      : {}),
+    ...(project.services &&
+    project.services.length > 0
+      ? {
+          keywords: project.services.join(", "),
+        }
+      : {}),
+  };
+
   return (
     <main className="pb-20 md:pb-28">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(projectJsonLd).replace(
+            /</g,
+            "\\u003c",
+          ),
+        }}
+      />
+
       <Container className="pt-6 md:pt-8">
         <BackLink
           href={ROUTES.home}
