@@ -14,10 +14,16 @@ function isCurrentRoute(
   href: string,
 ) {
   if (href === ROUTES.home) {
-    return pathname === ROUTES.home;
+    return (
+      pathname === ROUTES.home ||
+      pathname.startsWith("/work/")
+    );
   }
 
-  return pathname === href || pathname.startsWith(`${href}/`);
+  return (
+    pathname === href ||
+    pathname.startsWith(`${href}/`)
+  );
 }
 
 export function Header() {
@@ -49,6 +55,11 @@ export function Header() {
           duration-300
           ease-[var(--ease-portfolio)]
           hover:opacity-50
+          focus-visible:rounded-sm
+          focus-visible:outline
+          focus-visible:outline-2
+          focus-visible:outline-offset-4
+          focus-visible:outline-foreground
         "
       >
         Ricardo Oya
@@ -81,6 +92,11 @@ export function Header() {
                       duration-300
                       ease-[var(--ease-portfolio)]
                       hover:opacity-50
+                      focus-visible:rounded-sm
+                      focus-visible:outline
+                      focus-visible:outline-2
+                      focus-visible:outline-offset-4
+                      focus-visible:outline-foreground
                       xs:text-[0.68rem]
                       xs:tracking-[0.16em]
                     `,

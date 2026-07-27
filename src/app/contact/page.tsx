@@ -8,15 +8,37 @@ import { PageHero } from "@/components/ui/PageHero";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { ROUTES } from "@/constants/routes";
+import {
+  getAbsoluteUrl,
+  SITE_CONFIG,
+} from "@/lib/site";
+
+const pageDescription =
+  "Contact Ricardo Oya for retouching, post-production and creative collaborations.";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description:
-    "Contact Ricardo Oya for retouching, post-production and creative collaborations.",
-};
+  description: pageDescription,
 
-const INSTAGRAM_URL =
-  "https://www.instagram.com/ricardooya.art";
+  alternates: {
+    canonical: "/contact",
+  },
+
+  openGraph: {
+    type: "website",
+    locale: SITE_CONFIG.locale,
+    url: getAbsoluteUrl("/contact"),
+    siteName: SITE_CONFIG.name,
+    title: "Contact Ricardo Oya",
+    description: pageDescription,
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact Ricardo Oya",
+    description: pageDescription,
+  },
+};
 
 export default function ContactPage() {
   return (
@@ -54,17 +76,21 @@ export default function ContactPage() {
                 "
               >
                 <p className="max-w-2xl text-lg leading-8 text-muted md:text-xl md:leading-9">
-                  Available for retouching, post-production,
-                  commercial projects and creative collaborations.
+                  Available for retouching,
+                  post-production, commercial projects and
+                  creative collaborations.
                 </p>
 
                 <div>
-                  <SectionLabel>Get in touch</SectionLabel>
+                  <SectionLabel>
+                    Get in touch
+                  </SectionLabel>
 
                   <ArrowLink
-                    href={INSTAGRAM_URL}
+                    href={SITE_CONFIG.instagram}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
+                    aria-label="Contact Ricardo Oya on Instagram, opens in a new tab"
                     direction="up-right"
                     className="
                       mt-5

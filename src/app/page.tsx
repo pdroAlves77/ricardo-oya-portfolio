@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import { Container } from "@/components/layout/Container";
 import { ProjectCard } from "@/components/portfolio/ProjectCard";
 import { DisplayTitle } from "@/components/ui/DisplayTitle";
@@ -6,20 +8,60 @@ import { LeadText } from "@/components/ui/LeadText";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+import { SITE_CONFIG } from "@/lib/site";
 import { client } from "@/sanity/lib/client";
 import { PROJECTS_QUERY } from "@/sanity/queries/projects";
 import type { PortfolioProject } from "@/types/project";
 
+export const metadata: Metadata = {
+  title: {
+    absolute: SITE_CONFIG.title,
+  },
+
+  description: SITE_CONFIG.description,
+
+  alternates: {
+    canonical: "/",
+  },
+
+  openGraph: {
+    type: "website",
+    locale: SITE_CONFIG.locale,
+    url: SITE_CONFIG.url,
+    siteName: SITE_CONFIG.name,
+    title: SITE_CONFIG.title,
+    description: SITE_CONFIG.description,
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_CONFIG.title,
+    description: SITE_CONFIG.description,
+  },
+};
+
 export default async function HomePage() {
-  const projects =
-    await client.fetch<PortfolioProject[]>(PROJECTS_QUERY);
+  const projects = await client.fetch<
+    PortfolioProject[]
+  >(
+    PROJECTS_QUERY,
+    {},
+    {
+      next: {
+        revalidate: 60,
+        tags: ["projects"],
+      },
+    },
+  );
 
   const featuredProject =
-    projects.find((project) => project.featured) ?? projects[0];
+    projects.find((project) => project.featured) ??
+    projects[0];
 
   const remainingProjects = featuredProject
     ? projects.filter(
-        (project) => project._id !== featuredProject._id,
+        (project) =>
+          project._id !== featuredProject._id,
       )
     : [];
 
@@ -62,8 +104,9 @@ export default async function HomePage() {
               "
             >
               <LeadText className="max-w-3xl text-base leading-7 md:text-xl md:leading-9">
-                High-end retouching and image editing for automotive,
-                commercial and international projects.
+                High-end retouching and image editing for
+                automotive, commercial and international
+                projects.
               </LeadText>
 
               <div className="flex items-center gap-3 md:justify-self-end">
@@ -114,10 +157,16 @@ export default async function HomePage() {
             </Reveal>
           </section>
         ) : (
-          <section className="py-20">
-            <p className="text-base text-muted">
+          <section
+            aria-labelledby="empty-portfolio-heading"
+            className="py-20"
+          >
+            <h2
+              id="empty-portfolio-heading"
+              className="text-base font-normal text-muted"
+            >
               No projects have been published yet.
-            </p>
+            </h2>
           </section>
         )}
 
@@ -136,10 +185,9 @@ export default async function HomePage() {
                   title="More Work"
                   meta={
                     <>
-                      {String(remainingProjects.length).padStart(
-                        2,
-                        "0",
-                      )}{" "}
+                      {String(
+                        remainingProjects.length,
+                      ).padStart(2, "0")}{" "}
                       {remainingProjects.length === 1
                         ? "project"
                         : "projects"}
@@ -162,15 +210,22 @@ export default async function HomePage() {
                   xl:grid-cols-3
                 "
               >
-                {remainingProjects.map((project, index) => (
-                  <Reveal
-                    key={project._id}
-                    delay={Math.min(index * 0.06, 0.24)}
-                    distance={32}
-                  >
-                    <ProjectCard project={project} />
-                  </Reveal>
-                ))}
+                {remainingProjects.map(
+                  (project, index) => (
+                    <Reveal
+                      key={project._id}
+                      delay={Math.min(
+                        index * 0.06,
+                        0.24,
+                      )}
+                      distance={32}
+                    >
+                      <ProjectCard
+                        project={project}
+                      />
+                    </Reveal>
+                  ),
+                )}
               </div>
             </section>
           </>

@@ -9,11 +9,36 @@ import { Reveal } from "@/components/ui/Reveal";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { ROUTES } from "@/constants/routes";
+import {
+  getAbsoluteUrl,
+  SITE_CONFIG,
+} from "@/lib/site";
+
+const pageDescription =
+  "Ricardo Oya is a creative retoucher with over seven years of experience in high-end image editing and post-production.";
 
 export const metadata: Metadata = {
   title: "About",
-  description:
-    "Ricardo Oya is a creative retoucher with over seven years of experience in high-end image editing and post-production.",
+  description: pageDescription,
+
+  alternates: {
+    canonical: "/about",
+  },
+
+  openGraph: {
+    type: "profile",
+    locale: SITE_CONFIG.locale,
+    url: getAbsoluteUrl("/about"),
+    siteName: SITE_CONFIG.name,
+    title: "About Ricardo Oya",
+    description: pageDescription,
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "About Ricardo Oya",
+    description: pageDescription,
+  },
 };
 
 const specialties = [
@@ -51,16 +76,16 @@ export default function AboutPage() {
 
               <div className="mt-6 max-w-3xl space-y-6 text-base leading-8 text-muted md:text-lg md:leading-9">
                 <p>
-                  Ricardo Oya is a creative retoucher with over seven
-                  years of experience working with leading studios in
-                  Brazil.
+                  Ricardo Oya is a creative retoucher with over
+                  seven years of experience working with leading
+                  studios in Brazil.
                 </p>
 
                 <p>
-                  He now works independently with international clients,
-                  delivering high-end retouching, image editing and
-                  post-production for automotive, advertising and
-                  commercial projects.
+                  He now works independently with international
+                  clients, delivering high-end retouching, image
+                  editing and post-production for automotive,
+                  advertising and commercial projects.
                 </p>
               </div>
             </div>
@@ -90,7 +115,9 @@ export default function AboutPage() {
           <section className="py-12 md:py-16">
             <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <SectionLabel>Selected Work</SectionLabel>
+                <SectionLabel>
+                  Selected Work
+                </SectionLabel>
 
                 <SectionTitle className="mt-4">
                   Explore the portfolio.

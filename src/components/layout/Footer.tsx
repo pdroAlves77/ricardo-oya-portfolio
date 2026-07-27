@@ -1,15 +1,13 @@
 import Link from "next/link";
 
 import { ROUTES } from "@/constants/routes";
+import { SITE_CONFIG } from "@/lib/site";
 
 import { Container } from "./Container";
 
-const currentYear = new Date().getFullYear();
-
-const INSTAGRAM_URL =
-  "https://www.instagram.com/ricardooya.art";
-
 export function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
     <Container
       as="footer"
@@ -42,6 +40,12 @@ export function Footer() {
             transition-colors
             duration-300
             hover:text-foreground
+            focus-visible:rounded-sm
+            focus-visible:text-foreground
+            focus-visible:outline
+            focus-visible:outline-2
+            focus-visible:outline-offset-4
+            focus-visible:outline-foreground
           "
         >
           About
@@ -54,14 +58,20 @@ export function Footer() {
             transition-colors
             duration-300
             hover:text-foreground
+            focus-visible:rounded-sm
+            focus-visible:text-foreground
+            focus-visible:outline
+            focus-visible:outline-2
+            focus-visible:outline-offset-4
+            focus-visible:outline-foreground
           "
         >
           Contact
         </Link>
       </nav>
 
-      <Link
-        href={INSTAGRAM_URL}
+      <a
+        href={SITE_CONFIG.instagram}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Ricardo Oya on Instagram, opens in a new tab"
@@ -71,12 +81,18 @@ export function Footer() {
           transition-colors
           duration-300
           hover:text-foreground
+          focus-visible:rounded-sm
+          focus-visible:text-foreground
+          focus-visible:outline
+          focus-visible:outline-2
+          focus-visible:outline-offset-4
+          focus-visible:outline-foreground
           sm:justify-self-end
         "
       >
         Instagram
         <span aria-hidden="true"> ↗</span>
-      </Link>
+      </a>
     </Container>
   );
 }
