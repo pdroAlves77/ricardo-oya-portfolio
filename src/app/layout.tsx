@@ -1,5 +1,15 @@
 import type { Metadata } from "next";
+import { Geist } from "next/font/google";
+
+import { Footer } from "@/components/layout/Footer";
+import { Header } from "@/components/layout/Header";
+
 import "./globals.css";
+
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -21,7 +31,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={`${geist.variable} antialiased`}>
+        <div className="flex min-h-screen flex-col">
+          <Header />
+
+          <div className="flex-1">{children}</div>
+
+          <Footer />
+        </div>
+      </body>
     </html>
   );
 }
