@@ -185,7 +185,7 @@ export const projectType = defineType({
       name: "gallery",
       title: "Galeria",
       description:
-        "Arraste as imagens para alterar a ordem de exibição.",
+        "Arraste as imagens para alterar a ordem. Escolha um layout diferente para criar uma composição editorial.",
       type: "array",
 
       of: [
@@ -201,6 +201,8 @@ export const projectType = defineType({
             defineField({
               name: "alt",
               title: "Descrição da imagem",
+              description:
+                "Descreva brevemente o conteúdo da imagem para acessibilidade.",
               type: "string",
               validation: (rule) =>
                 rule
@@ -212,26 +214,26 @@ export const projectType = defineType({
               name: "layout",
               title: "Layout da imagem",
               description:
-                "Escolha como esta imagem será apresentada na página.",
+                "Escolha o tamanho e a posição desta imagem na página do projeto.",
               type: "string",
               initialValue: "full",
               options: {
                 list: [
                   {
+                    title: "Hero — grande destaque",
+                    value: "hero",
+                  },
+                  {
                     title: "Largura total",
                     value: "full",
                   },
                   {
-                    title: "Horizontal central",
-                    value: "centered",
+                    title: "Contida e centralizada",
+                    value: "contained",
                   },
                   {
-                    title: "Vertical à esquerda",
-                    value: "portraitLeft",
-                  },
-                  {
-                    title: "Vertical à direita",
-                    value: "portraitRight",
+                    title: "Retrato centralizado",
+                    value: "portrait",
                   },
                   {
                     title: "Duas colunas",
@@ -246,6 +248,40 @@ export const projectType = defineType({
                   .error("Selecione o layout da imagem."),
             }),
           ],
+
+          preview: {
+            select: {
+              media: "asset",
+              layout: "layout",
+              alt: "alt",
+            },
+
+            prepare({
+              media,
+              layout,
+              alt,
+            }) {
+              const layoutLabels: Record<string, string> = {
+                hero: "Hero",
+                full: "Largura total",
+                contained: "Contida",
+                portrait: "Retrato",
+                half: "Duas colunas",
+                centered: "Centralizada",
+                portraitLeft: "Retrato à esquerda",
+                portraitRight: "Retrato à direita",
+              };
+
+              return {
+                title:
+                  alt || "Imagem da galeria",
+                subtitle:
+                  layoutLabels[layout] ||
+                  "Largura total",
+                media,
+              };
+            },
+          },
         }),
       ],
 
@@ -343,8 +379,13 @@ export const projectType = defineType({
             };
           };
 
-          const hasBefore = Boolean(beforeAfter.before?.asset);
-          const hasAfter = Boolean(beforeAfter.after?.asset);
+          const hasBefore = Boolean(
+            beforeAfter.before?.asset,
+          );
+
+          const hasAfter = Boolean(
+            beforeAfter.after?.asset,
+          );
 
           if (hasBefore !== hasAfter) {
             return "Adicione as imagens de antes e depois.";
@@ -370,7 +411,8 @@ export const projectType = defineType({
         "Projetos com números menores aparecem primeiro.",
       type: "number",
       initialValue: 0,
-      validation: (rule) => rule.integer().min(0),
+      validation: (rule) =>
+        rule.integer().min(0),
     }),
   ],
 
@@ -418,7 +460,11 @@ export const projectType = defineType({
       year,
       media,
     }) {
-      const subtitle = [client, category, year]
+      const subtitle = [
+        client,
+        category,
+        year,
+      ]
         .filter(Boolean)
         .join(" · ");
 

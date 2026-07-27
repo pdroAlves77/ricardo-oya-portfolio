@@ -1,11 +1,14 @@
 import type { SanityImageSource } from "@sanity/image-url";
 
 export type GalleryLayout =
+  | "hero"
   | "full"
+  | "contained"
+  | "portrait"
+  | "half"
   | "centered"
   | "portraitLeft"
-  | "portraitRight"
-  | "half";
+  | "portraitRight";
 
 export type ProjectCategory =
   | "Automotive"
