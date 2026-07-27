@@ -44,7 +44,7 @@ export default async function HomePage() {
                 md:text-sm
               "
             >
-              Digital Retoucher
+              Creative Retoucher
             </p>
 
             <span
@@ -74,14 +74,14 @@ export default async function HomePage() {
               grid
               gap-7
               md:mt-12
-              md:grid-cols-[minmax(0,42rem)_auto]
+              md:grid-cols-[minmax(0,46rem)_auto]
               md:items-end
               md:justify-between
             "
           >
             <p
               className="
-                max-w-2xl
+                max-w-3xl
                 text-base
                 leading-7
                 text-muted
@@ -89,8 +89,8 @@ export default async function HomePage() {
                 md:leading-9
               "
             >
-              Retouching, compositing and post-production for automotive,
-              lifestyle and commercial campaigns.
+              High-end retouching and image editing for automotive,
+              commercial and international projects.
             </p>
 
             <div className="flex items-center gap-3 md:justify-self-end">
@@ -167,7 +167,6 @@ export default async function HomePage() {
               </div>
 
               <h2
-                id="featured-project-heading-mobile"
                 className="
                   text-2xl
                   font-medium
