@@ -44,10 +44,7 @@ const getProject = cache(async (slug: string) => {
     {
       next: {
         revalidate: 60,
-        tags: [
-          "projects",
-          `project:${slug}`,
-        ],
+        tags: ["projects", `project:${slug}`],
       },
     },
   );
@@ -76,7 +73,10 @@ function getGalleryLayoutClasses(
     case "contained":
     case "centered":
       return `
-        col-span-12
+        col-start-2
+        col-span-10
+        sm:col-start-2
+        sm:col-span-10
         md:col-start-2
         md:col-span-10
         xl:col-start-3
@@ -85,9 +85,10 @@ function getGalleryLayoutClasses(
 
     case "portrait":
       return `
-        col-span-12
-        sm:col-start-2
-        sm:col-span-10
+        col-start-3
+        col-span-8
+        sm:col-start-3
+        sm:col-span-8
         md:col-start-3
         md:col-span-8
         lg:col-start-4
@@ -98,14 +99,19 @@ function getGalleryLayoutClasses(
 
     case "portraitLeft":
       return `
-        col-span-12
+        col-start-1
+        col-span-8
+        sm:col-span-7
         md:col-span-6
         xl:col-span-5
       `;
 
     case "portraitRight":
       return `
-        col-span-12
+        col-start-5
+        col-span-8
+        sm:col-start-6
+        sm:col-span-7
         md:col-start-7
         md:col-span-6
         xl:col-start-8
@@ -114,8 +120,7 @@ function getGalleryLayoutClasses(
 
     case "half":
       return `
-        col-span-12
-        md:col-span-6
+        col-span-6
       `;
 
     case "full":
@@ -160,23 +165,30 @@ function getGalleryImageSizes(
   switch (layout) {
     case "portrait":
       return `
-        (max-width: 639px) 100vw,
+        (max-width: 639px) 67vw,
         (max-width: 1023px) 66vw,
         34vw
       `;
 
     case "portraitLeft":
     case "portraitRight":
+      return `
+        (max-width: 639px) 67vw,
+        (max-width: 767px) 58vw,
+        (max-width: 1279px) 50vw,
+        42vw
+      `;
+
     case "half":
       return `
-        (max-width: 767px) 100vw,
+        (max-width: 767px) 50vw,
         50vw
       `;
 
     case "contained":
     case "centered":
       return `
-        (max-width: 767px) 100vw,
+        (max-width: 767px) 84vw,
         70vw
       `;
 
@@ -218,8 +230,7 @@ function getProjectNavigation(
   }
 
   const currentIndex = projects.findIndex(
-    (project) =>
-      project._id === currentProjectId,
+    (project) => project._id === currentProjectId,
   );
 
   if (currentIndex === -1) {
@@ -231,9 +242,7 @@ function getProjectNavigation(
 
   if (projects.length === 2) {
     const otherProject =
-      projects[
-        currentIndex === 0 ? 1 : 0
-      ] ?? null;
+      projects[currentIndex === 0 ? 1 : 0] ?? null;
 
     return {
       previousProject: null,
@@ -252,11 +261,8 @@ function getProjectNavigation(
       : currentIndex + 1;
 
   return {
-    previousProject:
-      projects[previousIndex] ?? null,
-
-    nextProject:
-      projects[nextIndex] ?? null,
+    previousProject: projects[previousIndex] ?? null,
+    nextProject: projects[nextIndex] ?? null,
   };
 }
 
@@ -278,18 +284,14 @@ function ProjectGalleryImage({
 
   return (
     <Reveal
-      className={getGalleryLayoutClasses(
-        image.layout,
-      )}
+      className={getGalleryLayoutClasses(image.layout)}
       delay={Math.min(index * 0.05, 0.2)}
       distance={36}
       amount={0.08}
     >
       <figure
         className={`
-          ${getGalleryAspectRatio(
-            image.layout,
-          )}
+          ${getGalleryAspectRatio(image.layout)}
           relative
           w-full
           overflow-hidden
@@ -300,19 +302,13 @@ function ProjectGalleryImage({
           src={imageUrl}
           alt={
             image.alt ||
-            `${projectTitle}, image ${
-              index + 1
-            }`
+            `${projectTitle}, image ${index + 1}`
           }
           fill
           quality={90}
-          sizes={getGalleryImageSizes(
-            image.layout,
-          )}
+          sizes={getGalleryImageSizes(image.layout)}
           className={`
-            ${getGalleryImageClassName(
-              image.layout,
-            )}
+            ${getGalleryImageClassName(image.layout)}
             transition-transform
             duration-700
             ease-[var(--ease-portfolio)]
@@ -355,9 +351,7 @@ export async function generateMetadata({
     project.description ||
     `${project.title}, a ${project.category.toLowerCase()} retouching project by Ricardo Oya.`;
 
-  const socialImageUrl = urlFor(
-    project.coverImage,
-  )
+  const socialImageUrl = urlFor(project.coverImage)
     .width(1200)
     .height(630)
     .quality(90)
@@ -420,11 +414,10 @@ export default async function ProjectPage({
 }: ProjectPageProps) {
   const { slug } = await params;
 
-  const [project, projects] =
-    await Promise.all([
-      getProject(slug),
-      getProjects(),
-    ]);
+  const [project, projects] = await Promise.all([
+    getProject(slug),
+    getProjects(),
+  ]);
 
   if (!project) {
     notFound();
@@ -442,9 +435,7 @@ export default async function ProjectPage({
     `/work/${project.slug}`,
   );
 
-  const coverImageUrl = urlFor(
-    project.coverImage,
-  )
+  const coverImageUrl = urlFor(project.coverImage)
     .width(2800)
     .quality(90)
     .fit("max")
@@ -457,11 +448,8 @@ export default async function ProjectPage({
   );
 
   const beforeImageUrl =
-    hasBeforeAfter &&
-    project.beforeAfter?.before
-      ? urlFor(
-          project.beforeAfter.before,
-        )
+    hasBeforeAfter && project.beforeAfter?.before
+      ? urlFor(project.beforeAfter.before)
           .width(2800)
           .quality(90)
           .fit("max")
@@ -470,11 +458,8 @@ export default async function ProjectPage({
       : null;
 
   const afterImageUrl =
-    hasBeforeAfter &&
-    project.beforeAfter?.after
-      ? urlFor(
-          project.beforeAfter.after,
-        )
+    hasBeforeAfter && project.beforeAfter?.after
+      ? urlFor(project.beforeAfter.after)
           .width(2800)
           .quality(90)
           .fit("max")
@@ -514,8 +499,7 @@ export default async function ProjectPage({
     ...(project.services &&
     project.services.length > 0
       ? {
-          keywords:
-            project.services.join(", "),
+          keywords: project.services.join(", "),
         }
       : {}),
   };
@@ -525,9 +509,7 @@ export default async function ProjectPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(
-            projectJsonLd,
-          ).replace(
+          __html: JSON.stringify(projectJsonLd).replace(
             /</g,
             "\\u003c",
           ),
@@ -616,17 +598,14 @@ export default async function ProjectPage({
                 </div>
 
                 {project.services &&
-                  project.services.length >
-                    0 && (
+                  project.services.length > 0 && (
                     <div className="col-span-2 lg:col-span-1">
                       <dt className="text-[0.68rem] uppercase tracking-[0.17em] text-muted">
                         Services
                       </dt>
 
                       <dd className="mt-2 leading-6">
-                        {project.services.join(
-                          " · ",
-                        )}
+                        {project.services.join(" · ")}
                       </dd>
                     </div>
                   )}
@@ -636,8 +615,7 @@ export default async function ProjectPage({
 
           {(project.description ||
             (project.credits &&
-              project.credits.length >
-                0)) && (
+              project.credits.length > 0)) && (
             <Reveal delay={0.2}>
               <div
                 className="
@@ -662,30 +640,19 @@ export default async function ProjectPage({
                 </div>
 
                 {project.credits &&
-                  project.credits.length >
-                    0 && (
+                  project.credits.length > 0 && (
                     <dl className="grid grid-cols-2 gap-x-8 gap-y-7 md:grid-cols-1">
-                      {project.credits.map(
-                        (credit) => (
-                          <div
-                            key={
-                              credit._key
-                            }
-                          >
-                            <dt className="text-[0.68rem] uppercase tracking-[0.17em] text-muted">
-                              {
-                                credit.role
-                              }
-                            </dt>
+                      {project.credits.map((credit) => (
+                        <div key={credit._key}>
+                          <dt className="text-[0.68rem] uppercase tracking-[0.17em] text-muted">
+                            {credit.role}
+                          </dt>
 
-                            <dd className="mt-2 text-sm leading-relaxed">
-                              {
-                                credit.name
-                              }
-                            </dd>
-                          </div>
-                        ),
-                      )}
+                          <dd className="mt-2 text-sm leading-relaxed">
+                            {credit.name}
+                          </dd>
+                        </div>
+                      ))}
                     </dl>
                   )}
               </div>
@@ -742,9 +709,7 @@ export default async function ProjectPage({
                     `${project._id}-gallery-${index}`
                   }
                   image={image}
-                  projectTitle={
-                    project.title
-                  }
+                  projectTitle={project.title}
                   index={index}
                 />
               ),
@@ -774,20 +739,14 @@ export default async function ProjectPage({
                 amount={0.08}
               >
                 <BeforeAfterSlider
-                  beforeSrc={
-                    beforeImageUrl
-                  }
-                  afterSrc={
-                    afterImageUrl
-                  }
+                  beforeSrc={beforeImageUrl}
+                  afterSrc={afterImageUrl}
                   beforeAlt={
-                    project.beforeAfter
-                      ?.before?.alt ||
+                    project.beforeAfter?.before?.alt ||
                     `Before retouching for ${project.title}`
                   }
                   afterAlt={
-                    project.beforeAfter
-                      ?.after?.alt ||
+                    project.beforeAfter?.after?.alt ||
                     `After retouching for ${project.title}`
                   }
                 />
@@ -796,18 +755,13 @@ export default async function ProjectPage({
           </Container>
         )}
 
-      {(previousProject ||
-        nextProject) && (
+      {(previousProject || nextProject) && (
         <Container>
           <Reveal>
             <section className="pt-20 md:pt-28">
               <ProjectNavigation
-                previousProject={
-                  previousProject
-                }
-                nextProject={
-                  nextProject
-                }
+                previousProject={previousProject}
+                nextProject={nextProject}
               />
             </section>
           </Reveal>
